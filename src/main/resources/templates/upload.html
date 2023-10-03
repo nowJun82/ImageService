@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>이미지 업로드, 크롭 및 리사이징</title>
+</head>
+<body>
+    <h1>이미지 업로드, 크롭 및 리사이징</h1>
+    <form method="post" action="/upload" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*"><br>
+        <label for="cropWidth">크롭 가로 크기:</label>
+        <input type="number" name="cropWidth" id="cropWidth"><br>
+        <label for="cropHeight">크롭 세로 크기:</label>
+        <input type="number" name="cropHeight" id="cropHeight"><br>
+        <label for="cropX">크롭 시작 X 좌표:</label>
+        <input type="number" name="cropX" id="cropX"><br>
+        <label for="cropY">크롭 시작 Y 좌표:</label>
+        <input type="number" name="cropY" id="cropY"><br>
+        <label for="resizeWidth">리사이징 가로 크기:</label>
+        <input type="number" name="resizeWidth" id="resizeWidth"><br>
+        <label for="resizeHeight">리사이징 세로 크기:</label>
+        <input type="number" name="resizeHeight" id="resizeHeight"><br>
+        <button type="submit">업로드</button>
+    </form>
+</body>
+</html>
