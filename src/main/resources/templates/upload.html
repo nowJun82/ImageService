@@ -1,26 +1,36 @@
-<!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>이미지 업로드, 크롭 및 리사이징</title>
+    <title>이미지 업로드 > 크롭 & 리사이즈</title>
+    <link th:href="@{/style.css}" rel="stylesheet" type="text/css"/>
+    <!-- header 필요해지면 그 때 구현 -->
+    <!--div th:replace="header :: header"></div-->
 </head>
+
 <body>
-    <h1>이미지 업로드, 크롭 및 리사이징</h1>
-    <form method="post" action="/upload" enctype="multipart/form-data">
-        <input type="file" name="file" accept="image/*"><br>
-        <label for="cropWidth">크롭 가로 크기:</label>
-        <input type="number" name="cropWidth" id="cropWidth"><br>
-        <label for="cropHeight">크롭 세로 크기:</label>
-        <input type="number" name="cropHeight" id="cropHeight"><br>
-        <label for="cropX">크롭 시작 X 좌표:</label>
-        <input type="number" name="cropX" id="cropX"><br>
-        <label for="cropY">크롭 시작 Y 좌표:</label>
-        <input type="number" name="cropY" id="cropY"><br>
-        <label for="resizeWidth">리사이징 가로 크기:</label>
-        <input type="number" name="resizeWidth" id="resizeWidth"><br>
-        <label for="resizeHeight">리사이징 세로 크기:</label>
-        <input type="number" name="resizeHeight" id="resizeHeight"><br>
-        <button type="submit">업로드</button>
-    </form>
+    <h1>이미지 업로드 > 크롭 & 리사이즈</h1>
+    <div class="area">
+        <form method="post" action="/upload" enctype="multipart/form-data" class="form-area">
+            <input type="file" name="file" accept="image/*"><br>
+            <label for="cropWidth">크롭 가로 크기:</label>
+            <input type="number" name="cropWidth" id="cropWidth"><br>
+            <label for="cropHeight">크롭 세로 크기:</label>
+            <input type="number" name="cropHeight" id="cropHeight"><br>
+            <label for="cropX">크롭 시작 X 좌표:</label>
+            <input type="number" name="cropX" id="cropX"><br>
+            <label for="cropY">크롭 시작 Y 좌표:</label>
+            <input type="number" name="cropY" id="cropY"><br>
+            <label for="resizeWidth">리사이징 가로 크기:</label>
+            <input type="number" name="resizeWidth" id="resizeWidth"><br>
+            <label for="resizeHeight">리사이징 세로 크기:</label>
+            <input type="number" name="resizeHeight" id="resizeHeight"><br>
+            <button type="submit">업로드</button>
+        </form>
+        <!-- 밑 div에 이미지 미리보기 구현 -->
+        <div class="img-preview">미리보기</div>
+    </div>
+
+    <!-- 밑 div에 다운로드 관련 보기 구현 -->
+    <div class="download-area">다운로드</div>
 </body>
 </html>
