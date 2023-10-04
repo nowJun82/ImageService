@@ -27,7 +27,9 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.5'
-
+	implementation 'org.apache.tika:tika-core:2.9.0'
+	implementation 'org.apache.tika:tika-parsers-standard-package:2.9.0'
+	implementation 'org.apache.commons:commons-imaging:1.0-alpha3'
 }
 
 tasks.named('test') {
