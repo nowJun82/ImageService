@@ -1,6 +1,11 @@
 package ImageService;
 
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.tika.Tika;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,9 +16,19 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class ImageController {
+
+    @Autowired
+    private ImageService imageService;
 
     @GetMapping("/")
     public String showUploadForm() {
@@ -56,23 +71,67 @@ public class ImageController {
         return "redirect:/"; // 업로드 실패 시 홈페이지로 리다이렉트
     }
 
-//    @GetMapping("/resize")
-//    void imageMagick() throws IOException {
-//        List<String> commands = new ArrayList<>();
-//        commands.add("convert");
-//        commands.add("-resize");
-//        commands.add("100x100");
-//        commands.add("C:/test/resize/origin/1.png");
-//        commands.add("C:/test/resize/origin/100.png");
-//
-//        ProcessBuilder pb = new ProcessBuilder(commands);
-//
-//        try {
-//            Process process = pb.start();
-//            process.waitFor();
-//            System.out.println("Image converted successfully");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @GetMapping("/resize")
+    public ResponseEntity<?> resizeImage(@RequestParam("url") String imageUrl, @RequestParam("width") int width, @RequestParam("height") int height) throws IOException {
+
+        imageService.resizeImage(imageUrl, width, height);
+        Tika tika = new Tika();
+        String extension = "";
+        byte[] imageData;
+
+        // 처음으로 이미지 URL에서 스트림을 가져와 MIME 타입 감지
+        try (InputStream imageStreamForDetecting = new URL(imageUrl).openStream()) {
+            String mimeType = tika.detect(imageStreamForDetecting);
+            extension = mimeType.split("/")[1];
+        } catch (IOException e) {
+            e.printStackTrace();
+            // 여기서 예외 처리
+        }
+
+        // 두 번째로 이미지 URL에서 스트림을 가져와 실제 데이터 저장
+        try (InputStream imageStreamForSaving = new URL(imageUrl).openStream()) {
+            File dir = new File("C:/test/resize/origin/");
+            if (!dir.exists()) {
+                dir.mkdirs();  // 디렉토리가 없으면 생성
+            }
+
+            File tempFile = new File(dir, "555." + extension);
+            Files.copy(imageStreamForSaving, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            // 세 번째로 리사이징
+            List<String> commands = new ArrayList<>();
+            commands.add("magick");
+            commands.add("convert");
+            commands.add("-resize");
+            commands.add(width + "x" + height);
+
+            if (tempFile != null && tempFile.exists()) {
+                commands.add(tempFile.getAbsolutePath());
+
+                String outputFilePath = "C:/test/resize/origin/666." + extension;
+                commands.add(outputFilePath);
+
+                ProcessBuilder pb = new ProcessBuilder(commands);
+
+                try {
+                    Process process = pb.start();
+                    process.waitFor();
+
+                    imageData = Files.readAllBytes(Paths.get(outputFilePath));
+
+                    return ResponseEntity.ok()
+                            .contentType(MediaType.parseMediaType("image/" + extension))
+                            .body(imageData);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
